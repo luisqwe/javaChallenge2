@@ -1,10 +1,11 @@
 package com.davivienda.sv.challenge;
-
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FileCounter {
-	private String fileContent;
+private String fileContent;
 	
 	public FileCounter(String content) {
 		this.fileContent = content;
@@ -15,7 +16,13 @@ public class FileCounter {
 	 */
 	public int getChapterCount() {
 		//TODO: Implementar
-		return 0;
+		Pattern pattern = Pattern.compile("CHAPTER", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(fileContent);
+		int count = 0;
+		while (matcher.find()) {
+			count++;
+		}
+		return count;
 	}
 	
 	/**
@@ -23,7 +30,13 @@ public class FileCounter {
 	 */
 	public int getDraculaMentionCount() {
 		//TODO: Implementar
-		return 0;
+		Pattern pattern = Pattern.compile("\\bDracula\\b", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(fileContent);
+		int count = 0;
+		while (matcher.find()) {
+			count++;
+		}
+            return count;
 	}
 	
 	/**
@@ -31,7 +44,25 @@ public class FileCounter {
 	 */
 	public int getBiggestChapter() {
 		//TODO: Implementar
-		return 0;
+		Pattern pattern = Pattern.compile("(?i)CHAPTER (\\w+)");
+		Matcher matcher = pattern.matcher(fileContent);
+		
+		int maxChapterLines = 0;
+		int currentChapterLines = 0;
+		
+		while (matcher.find()) {
+			String ChapterTitle = matcher.group(1);
+			int chapterStartIndex = matcher.start();
+			int nextChapterIndex = matcher.find(matcher.start()+1) ? matcher.start() : fileContent.length();
+			
+			String chapterContent = fileContent.substring(chapterStartIndex, nextChapterIndex);
+			int chapterLineCount = chapterContent.split("\n").length;
+			
+			if (chapterLineCount > maxChapterLines) {
+				maxChapterLines = chapterLineCount;
+			}
+		}
+		return maxChapterLines;
 	}
 
 	/**
@@ -39,7 +70,15 @@ public class FileCounter {
 	 */
 	public List<String> getLetterDates() {
 		//TODO: Implementar
-		return Collections.emptyList();
+		Pattern pattern = Pattern.compile("(?i)(\\d{1,2}\\s(?:January|February|March|April|May|July|August|September|October|November|December))");
+		Matcher matcher = pattern.matcher(fileContent);
+		
+		List<String> dates = new ArrayList<>();
+		
+		while (matcher.find()) {
+			dates.add(matcher.group(1));
+		}
+		return dates;
 	}
 	
 	/**
@@ -47,6 +86,15 @@ public class FileCounter {
 	 */
 	public List<String> getLetterRecipients() {
 		//TODO: Implementar
-		return Collections.emptyList();
+		Pattern pattern = Pattern.compile("(?i)(\\d{1,2}\\s(?:Jonathan Harker's Journal|Dr\\. Van Helsing's Memorandum|Dr\\. Seward's Diary))");
+		Matcher matcher = pattern.matcher(fileContent);
+		
+		List<String> recipients = new ArrayList<>();
+		
+		while (matcher.find()) {
+			recipients.add(matcher.group(1));
+		}
+		
+		return recipients;
 	}
 }
